@@ -1,0 +1,171 @@
+{% extends 'layout.html' %}
+{% block content %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+
+<div class="col-xs-10 col-sm-6 col-md-6">
+    <div class="card card-style mb-2">
+        <h3 style="font-family: Georgia, 'Times New Roman', Times, serif;"><img src='{{url_for("static",filename=name_country[1]+".png")}}' >{{name_country[0]}}
+            <div>
+                <a href="{{ url_for('dashboard',idenreprise = id,year='2018')}}">2018</a>
+                <a href="{{ url_for('dashboard',idenreprise = id,year='2019')}}">2019</a>
+                <a href="{{ url_for('dashboard',idenreprise = id,year='2020')}}">2020</a>
+            </div></h3>
+        <div class="card-body">
+            <div class="chart-container" style="position: relative;">
+                <canvas id="income_vs_expense"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-xs-10 col-sm-6 col-md-6">
+    <div class="card card-style mb-2">
+        <div class="card-body">
+            <div class="chart-container" style="position: relative;">
+                <canvas id="income_vs_category"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-xs-10 col-sm-6 col-md-6" id="overtime">
+    <div class="card card-style mb-2">
+        <div class="card-body">
+            <div class="chart-container" style="position: relative;">
+                <div>
+                    <canvas id="overtime_expenditure"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<style>
+    #overtime {
+        position: absolute;
+        top: 77.5%;
+        left:0% ;
+    }
+    #bargraph{
+        position: absolute;
+        top: 63.5%;
+        left:48% ;
+    }
+</style>
+
+
+    <div class="chart" id="bargraph">
+            <script>
+                var graphs = {{plot | safe}};
+                Plotly.plot('bargraph',graphs,{});
+            </script>
+    </div>
+
+
+
+{% block javascript %}
+<script>
+    let income_vs_expense_data = JSON.parse({{ income_vs_expense | tojson }})
+    let income_category_data = JSON.parse({{ income_category | tojson}})
+
+    Chart.scaleService.updateScaleDefaults('linear', {
+            ticks: {
+                min: 0
+            }
+    });
+
+
+    let income_vs_expense_chart = new Chart(income_vs_expense, {
+            type: 'bar',
+            data: {
+            labels: ['ASSETS' , 'LIABILITIES'],
+                datasets: [{
+                    //label: "ASSETS VS LIABILITIES",
+                    data: income_vs_expense_data,
+                    backgroundColor: ['#5DA5DA ', '#FAA43A', '#60BD68',
+                        '#B276B2', '#E16851', '#FB8267'],
+
+                    borderWidth: 1,
+                    hoverBorderColor: "black",
+                    hoverBorderWidth: 2,
+                    hoverBackgroundColor: 'rgba(154, 245, 140)',
+                    pointHoverRadius: 5
+                }],
+            },
+            options: {
+                    title: {
+                        position : "left",
+                        display: true,
+                            text: "ASSETS VS LIABILITIES ($)",
+                                fontSize: 20,
+                    },
+                    legend: {
+                        display: false,
+                    },
+
+                    elements: {
+                        hitRadius: 3,
+                    }
+            }
+        })
+
+    let income_vs_category_chart = new Chart(income_vs_category, {
+            type: 'pie',
+            data: {
+                labels: ["Net sales",'Net income','Free Cash Flow', 'net debt'],
+                datasets: [{
+                    label: "BALANCE SHEET SECTION",
+                    data: income_category_data,
+            backgroundColor: ['#5DA5DA ', '#FAA43A', '#60BD68',
+                '#B276B2', '#E16851', '#FB8267'],
+            borderWidth: 1,
+            hoverBorderColor: "black",
+            hoverBorderWidth: 2,
+            hoverBackgroundColor: 'rgba(154, 245, 140)',
+            pointHoverRadius: 5
+        }],
+            },
+        options: {
+                title: {
+                    display: true,
+                        text: "FINANCIAL STATE SECTION ($)",
+                            fontSize: 20,
+            },
+                legend: {
+                    position: "right",
+                        labels: {
+                        fontColor: "gray"
+                    },
+                    display: true,
+            },
+
+                elements: {
+                    hitRadius: 3,
+            }
+            }
+        })
+        over_time_expenditure = JSON.parse({{over_time_expenditure | tojson}})
+        labels = JSON.parse({{ dates_label  | tojson}})
+
+        new Chart(document.getElementById("overtime_expenditure"), {
+                type: "line",
+                data:
+                {
+                    labels: labels,
+                    datasets: [{
+                        label: "Net Sales Over Time ($)",
+                        
+                        data: over_time_expenditure,
+                        fill: false,
+                        borderColor: "rgb(75, 192, 192)",
+                        lineTension: 0.1
+                    }]
+                },
+                options: {
+            }
+            });
+</script>
+{% endblock%}
+
+{% endblock %}

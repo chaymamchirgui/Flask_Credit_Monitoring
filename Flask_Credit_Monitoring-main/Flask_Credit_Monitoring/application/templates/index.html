@@ -1,0 +1,113 @@
+{% extends 'layout.html' %}
+{% block content %}
+    
+    <div class="col-sm-10 ml-auto mr-auto ">
+        <H2>Entreprises Summary</H2>
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Id</th> 
+                    <th scope="col">Name</th>
+                    <th scope="col">Country</th>
+                    <th scope="col">equity capital</th>
+                    <th scope="col">Net Income</th>
+                    <th scope="col">Net Sales</th>		
+                    <th scope="col">Delete</th>
+                    <th scope="col">Visualise</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in entries.iterrows() %}
+                        <tr>
+                            <td><h3 style="color: blue;">{{ entry[0]}}</h3></td>
+                            <td><b>{{ entry[1]["name-country"][0]}}</b></td>
+                            <td><img src='{{url_for("static",filename=entry[1]["name-country"][1]+".png")}}' >{{ entry[1]["name-country"][1]}}</td>
+                            <td>{{ entry[1]["Capitaux Propres"]["2018"] }}</td>
+                            <td>{{ entry[1]["Résultat net"]["2018"] }}</td>
+                            <td>{{ entry[1]["Chiffre d'affaires"]["2018"] }}</td>
+                            {% if entry %}
+                            <td><button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal-{{entry[1]['name-country'][0]}}" > Delete </button></td>
+                            <td><a href="{{ url_for('dashboard',idenreprise = entry[0],year='2018')}}" class="btn btn-outline-success btn-sm">View</a></td>
+                            {% else %}
+                            <td><a href="{{ url_for('dashboard_empty')}}" class="btn btn-outline-success btn-sm">View</a></td>
+                            {% endif %}
+                        </tr>
+               <!-- Modal -->
+               <div class="modal fade" id="deleteModal-{{entry[1]['name-country'][0]}}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel">Delete {{entry[1]["name-country"][0]}} ?</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                    </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <a class="btn btn-danger" href="{{ url_for('delete',entry_id = entry[0])}}">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            </div>    
+
+        {% endfor %}
+ 
+        </tbody>
+        <div>
+        {% if page > 1 %}
+        <a href="{{url_for('index',page=page-1)}}"
+        class="btn btn-outline-dark">
+        Previous
+        </a>    
+        {% endif %}
+        {% if page < max %}
+        <a href="{{url_for('index',page=page+1)}}"
+        class="btn btn-outline-dark">
+        Next
+        </a>
+        {% endif %}
+        </div>
+        <form action="" method="POST">
+            {{ form.csrf_token() }}
+            <div class="form-group" style="max-width:9%;" id="country_filter">
+                {{ form.field(class = "form-control form-control-sm") }}
+            </div>
+            <div class="form-group border-bottom pb-3" id="filter_button">
+                {{ form.submit(class="btn btn-outline-info")}}
+            </div>
+        </form>
+        <form action="" method="POST">
+            {{ form2.csrf_token() }}
+            <div class="form-group" style="max-width:9%;" id="name_filter">
+                {{ form2.name(class = "form-control form-control-sm",placeholder="search") }}
+            </div>
+            <div class="form-group border-bottom pb-3" id="name_button">
+                {{ form2.submit(class="btn btn-outline-info")}}
+            </div>
+        </form>
+        </table>
+    <style>
+        #country_filter{
+            position: absolute;
+            top: 0.5%;
+            left:33% ;
+        }
+        #filter_button{
+            position: absolute;
+            top: 0.2%;
+            left:43% ;
+        }
+        #name_filter{
+            position: absolute;
+            top: 0.5%;
+            left:53% ;
+        }
+        #name_button{
+            position: absolute;
+            top: 0.2%;
+            left:63% ;
+        }
+    </style>
+ 
+{% endblock %}
+

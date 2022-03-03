@@ -1,0 +1,261 @@
+{% extends 'layout.html' %}
+{% block content %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js" ></script>
+     
+  <div id='country-name'><p><img src='{{url_for("static",filename=name_country[0]+".png")}}' ><h4>{{name_country[1]}}</h4></p></div>
+  <div id="donutchart" style="width: 600px; height: 400px;"></div>
+
+  <div id="table_div"></div>
+  <div id="gauge_div" style="width:400px; height: 200px"></div>
+  <div class="bold-font"><p id="demo"></p></div>
+  <div id="gauge_div1" style="width:400px; height: 200px"></div>
+  <div class="bold-font1" ><p id='highly'>H: Highly Leveraged<br>F:Fair<br>V:Vulnerable</p></div>
+  <style>
+    #country-name{
+       position: absolute;
+        right:5% ;
+        top :75%;
+    }
+    #highly {
+      position: absolute;
+        top: 60%;
+        left:15% ;
+    }
+    #demo {
+        position: absolute;
+        top: 36%;
+        left:21% ;
+    }
+    #gauge_div {
+        position: absolute;
+        top: 60%;
+        left:30% ;
+    }
+    #gauge_div1 {
+        position: absolute;
+        top: 60%;
+        left:60% ;
+    }
+    #table_div{
+        position: absolute;
+        top: 20%;
+        left:48% ;
+    }
+    #donutchart {
+        position: absolute;
+        top: 10%;
+        left:5% ;
+    }
+  
+  .bold-green-font {
+    font-weight: bold;
+    color: green;
+  }
+  .bold-red-font {
+    font-weight: bold;
+    color: red;
+  }
+  .bold-blue-font {
+    font-weight: bold;
+    color: blue;
+  }
+  .bold-orange-font {
+    font-weight: bold;
+    color: orange;
+  }
+  .bold-font {
+    font-weight: bold;
+    font-size: 50px;
+    color: rgb(126, 16, 80);
+    text-align: center;
+  }
+  .bold-font1 {
+    font-weight: bold;
+    font-size: 20px;
+    color: rgb(126, 16, 80);
+    
+  }
+
+  .right-text {
+    text-align: right;
+  }
+
+  .large-font {
+    font-size: 15px;
+  }
+
+  .italic-darkblue-font {
+    font-style: italic;
+    color: rgb(185, 13, 27);
+  }
+
+  .italic-purple-font {
+    font-style: italic;
+    color: purple;
+  }
+
+  .underline-blue-font {
+    text-decoration: underline;
+    color: blue;
+  }
+
+  .gold-border {
+    border: 3px solid gold;
+  }
+
+  .deeppink-border {
+    border: 3px solid deeppink;
+  }
+
+  .orange-background {
+    background-color: orange;
+  }
+
+  .red-background {
+    background-color: rgb(206, 32, 32);
+  }
+
+  .blue-background {
+    background-color: rgb(3, 12, 65);
+  }
+
+
+</style>
+
+  {% block javascript %}
+  <script>
+  let profitability_scores_data = JSON.parse({{ profitability_scores | tojson }})
+  let leverage_scores_data = JSON.parse({{ leverage_scores | tojson }})
+  let operating_efficiencys_data = JSON.parse({{ operating_efficiencys | tojson }})
+  let Piotroski_scores_data = JSON.parse({{ Piotroski_scores | tojson }})
+  let altman_scores_data = JSON.parse({{ altman_scores | tojson }})
+  let scores_data = JSON.parse({{ scores | tojson }})
+  let capitalStructure_scores_data = JSON.parse({{ capitalStructure_scores | tojson }})
+  let Debt_Service_Capacity_score_data = JSON.parse({{ Debt_Service_Capacity_score | tojson }})
+  let Efficiency_score_data= JSON.parse({{ Efficiency_score | tojson }})
+  let size_score_data= JSON.parse({{ size_score | tojson }})
+  let debt_ratios_data= JSON.parse({{ debt_ratios | tojson }})
+  google.charts.load('current', {'packages':['gauge']});
+  google.charts.setOnLoadCallback(drawGauge);
+
+  
+  var gauge;
+
+  /*
+  function drawGauge() {
+    gaugeData = new google.visualization.DataTable();
+    gaugeData.addColumn('number', 'Piotroski');
+    gaugeData.addRows(1);
+    gaugeData.setCell(0, 0, Piotroski_scores_data);
+    
+
+    gauge = new google.visualization.Gauge(document.getElementById('gauge_div'));
+    gauge.draw(gaugeData, gaugeOptions);
+    
+  }*/
+  function drawGauge() {
+    var gaugeOptions = {min: 0, max: 12, yellowFrom: 3, yellowTo: 6,greenFrom:6,greenTo:10,
+    redFrom: 0, redTo: 3, minorTicks: 5};
+  var gaugeOptions1 = {min: -2.0, max: 6.0, yellowFrom: 0.0, yellowTo: 2.0,greenFrom:2.0,greenTo:4.0,
+    redFrom: -2.0, redTo: 0.0, minorTicks: 1};
+    gaugeData = new google.visualization.DataTable();
+    gaugeData.addColumn('number', 'Altman');
+    gaugeData.addRows(1);
+    gaugeData.setCell(0, 0, altman_scores_data);
+
+    gaugeData1 = new google.visualization.DataTable();
+    gaugeData1.addColumn('number', 'Piotroski');
+    gaugeData1.addRows(1);
+    gaugeData1.setCell(0, 0, Piotroski_scores_data);
+
+    gauge = new google.visualization.Gauge(document.getElementById('gauge_div'));
+    gauge.draw(gaugeData, gaugeOptions1);
+    
+    gauge1 = new google.visualization.Gauge(document.getElementById('gauge_div1'));
+    gauge1.draw(gaugeData1, gaugeOptions);
+  }
+  
+  google.charts.load("current", {packages:["corechart"]});
+  google.charts.setOnLoadCallback(drawChart);
+  function drawChart() {
+    var data = google.visualization.arrayToDataTable([
+      ['Buisness Risk', 'Ratio Value'],
+      ['Efficiency',     Efficiency_score_data],
+      ['capitalStructure',    capitalStructure_scores_data],
+      ['Debt_Service',  Debt_Service_Capacity_score_data],
+      ['debt',  debt_ratios_data]
+    ]);
+
+    var options = {
+    
+      pieHole: 0.5,
+    
+    };
+
+    var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+    chart.draw(data, options);
+  }
+  google.charts.load('current', {'packages':['table']});
+      google.charts.setOnLoadCallback(drawTable);
+
+      function drawTable() {
+        var cssClassNames = {
+          'headerRow': 'italic-darkblue-font large-font bold-font',
+          'tableRow': '',
+          'oddTableRow': '',
+          'selectedTableRow': 'orange-background large-font',
+          'hoverTableRow': '',
+          'headerCell': 'gold-border',
+          'rowNumberCell': 'underline-blue-font'};
+        var data = new google.visualization.DataTable();
+        data.addColumn('string',null)
+        data.addColumn('string', 'Risk Type');
+        data.addColumn('string', 'Ratio');
+        data.addColumn('number', 'Ratio Value');
+        data.addColumn('number', 'Median');
+        data.addRows(5);
+        data.setCell(3,0,'',null,{'style': 'background-color: blue;'});
+        data.setCell(3,1,'Business Risk',null);
+        data.setCell(3,2,'Net Income/Total Revenue');
+        data.setCell(3,3, Efficiency_score_data*100,Efficiency_score_data*100+'%');
+        data.setCell(3,4,0.40,'0.40%');
+        data.setCell(4,0,null,null);
+        data.setCell(4,1,'Business Risk');
+        data.setCell( 4,2,'Total Revenues');
+        data.setCell(4,3, size_score_data/1000000);
+        data.setCell(1,4,613.0,'613*');
+        data.setCell(2,0,null,null,{'style': 'background-color: red;'});
+        data.setCell(2,1,'Financial Risk');
+        data.setCell( 2,2,'totalStockholderEquity/Total_Asset1');
+        data.setCell(2,3,capitalStructure_scores_data);
+        data.setCell(2,4,31.81,'31.81%');
+        data.setCell(0,0,null,null,{'style': 'background-color: orange;'});
+        data.setCell(0,1,'Financial Risk');
+        data.setCell( 0,2,'Net Income/Total Liabilities');
+        data.setCell(0,3,Debt_Service_Capacity_score_data);
+        data.setCell(0,4,1.97,'1.97%');
+        data.setCell(1,0,null,null,{'style': 'background-color: green;'});
+        data.setCell(1,1,'Financial Risk');
+        data.setCell( 1,2,'Debt Ratio');
+        data.setCell(1,3,debt_ratios_data );
+        data.setCell(1,4,10,'10%'); 
+          
+         
+        
+
+        var table = new google.visualization.Table(document.getElementById('table_div'));
+
+        table.draw(data, {showRowNumber: true, width: '100%', height: '100%','showRowNumber': true, 'allowHtml': true, 'cssClassNames': cssClassNames});
+      }
+      if(scores_data==2)
+        document.getElementById("demo").innerHTML = 'H';
+      else if(scores_data==1)
+        document.getElementById("demo").innerHTML = 'F';
+      else
+        document.getElementById("demo").innerHTML = 'V';
+        
+//document.getElementById("country-name").innerHTML = name_country;    
+</script>
+{% endblock%}
+
+{% endblock %}

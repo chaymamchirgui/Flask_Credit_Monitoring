@@ -1,0 +1,67 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="col-xs-10 col-sm-6 col-md-6">
+    <h2>add Entreprise</h2>
+    <div class="card card-style mb-2">
+        <div class="card-body">
+            <form action="" method="POST">
+                {{ form.csrf_token() }}
+                <fieldset class="form-group">
+                    <legend class="mb-4">Balance sheet Fields</legend>
+                    <div class="form-group">
+                        {{ form.name.label(class="form-control-label") }}
+                        {{ form.name(class="form-control form-control-sm",placeholder="name") }}
+                    </div>
+            
+                    <div class="form-group">
+                        {{ form.country.label(class = "form-control-label") }}
+                        {{ form.country(class = "form-control form-control-sm") }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.total_actifs.label(class = "form-control-label") }}
+                        {{ form.total_actifs(class = "form-control form-control-sm",placeholder="2018 2019 2020") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.total_passifs.label(class = "form-control-label") }}
+                        {{ form.total_passifs(class = "form-control form-control-sm",placeholder="2018 2019 2020") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.capitaux_propres.label(class = "form-control-label") }}
+                        {{ form.capitaux_propres(class = "form-control form-control-sm",placeholder="2018 2019 2020") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.free_cash_flow.label(class = "form-control-label") }}
+                        {{ form.free_cash_flow(class = "form-control form-control-sm",placeholder="2018 2019 2020") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.dette_nette.label(class = "form-control-label") }}
+                        {{ form.dette_nette(class = "form-control form-control-sm",placeholder="2018 2019 2020") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.resultat_net.label(class = "form-control-label") }}
+                        {{ form.resultat_net(class = "form-control form-control-sm",placeholder="2018 2019 2020") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.resultat_exploitation.label(class = "form-control-label") }}
+                        {{ form.resultat_exploitation(class = "form-control form-control-sm",placeholder="2018 2019 2020") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.chiffre_affaires.label(class = "form-control-label") }}
+                        {{ form.chiffre_affaires(class = "form-control form-control-sm",placeholder="2018 2019 2020") }}
+                    </div>
+                    <div class="form-group1">
+                        {{ form.capitalisation.label(class = "form-control-label") }}
+                        {{ form.capitalisation(class = "form-control form-control-sm",placeholder="2018 2019 2020") }}
+                    </div>
+            
+                    <div class="form-group border-bottom pb-3">
+                        {{ form.submit(class="btn btn-outline-info")}}
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+    
+{% endblock %}
